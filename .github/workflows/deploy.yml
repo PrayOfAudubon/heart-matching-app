@@ -23,12 +23,12 @@ jobs:
         # cache: 'npm' ← この行を削除
 
     - name: Install dependencies
-        run: npm install
-        working-directory: ./heart-matching-app
+      run: npm install
+      working-directory: ./heart-matching-app
       
     - name: Build
-        run: npm run build
-        working-directory: ./heart-matching-app
+      run: npm run build
+      working-directory: ./heart-matching-app
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
