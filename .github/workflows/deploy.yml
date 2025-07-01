@@ -24,9 +24,10 @@ jobs:
     - name: Install dependencies
       run: npm install
       working-directory: ./heart-matching-app
-
+      
     - name: Build
       run: npm run build
+      working-directory: ./heart-matching-app
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
@@ -34,7 +35,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: './dist'
+        path: './heart-matching-app/dist'
 
     - name: Deploy to GitHub Pages
       id: deployment
