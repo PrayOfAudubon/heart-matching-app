@@ -57,7 +57,8 @@ const Dashboard = ({
             {currentView === 'applications' ? '申請管理' : 
              currentView === 'chats' ? 'チャット一覧' : 
              currentView === 'facilities' ? '医療機関管理' :
-             currentView === 'matching' ? '患者マッチング' : '患者検索'}
+             currentView === 'matching' ? '患者マッチング' :
+             currentView === 'map' ? '患者マップ' : '患者検索'}
           </h2>
           <div className="flex flex-wrap gap-2">
             <button

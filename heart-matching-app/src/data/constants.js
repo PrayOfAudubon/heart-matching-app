@@ -114,3 +114,33 @@ export const PROVIDER_SERVICE_OPTIONS = [
   { value: '薬剤指導', label: '薬剤指導' },
   { value: '緊急対応', label: '緊急対応' },
 ];
+
+// 専門分野選択肢
+export const SPECIALTY_OPTIONS = [
+  { value: '循環器内科', label: '循環器内科' },
+  { value: '内科', label: '内科' },
+  { value: '心臓血管外科', label: '心臓血管外科' },
+  { value: 'リハビリテーション科', label: 'リハビリテーション科' },
+  { value: '心不全ケア', label: '心不全ケア' },
+  { value: '在宅医療', label: '在宅医療' },
+  { value: '老年内科', label: '老年内科' },
+  { value: '緩和ケア', label: '緩和ケア' },
+];
+
+// 特徴・設備選択肢
+export const FEATURE_OPTIONS = [
+  { value: '24時間対応', label: '24時間対応' },
+  { value: '往診車配備', label: '往診車配備' },
+  { value: 'ICU完備', label: 'ICU完備' },
+  { value: '専門医常駐', label: '専門医常駐' },
+  { value: 'リハビリ専門', label: 'リハビリ専門' },
+  { value: '理学療法士常駐', label: '理学療法士常駐' },
+  { value: '看護師24名体制', label: '看護師24名体制' },
+  { value: '薬剤師連携', label: '薬剤師連携' },
+  { value: '栄養士在籍', label: '栄養士在籍' },
+  { value: 'CT完備', label: 'CT完備' },
+  { value: 'MRI完備', label: 'MRI完備' },
+  { value: '心電図検査', label: '心電図検査' },
+  { value: '駐車場完備', label: '駐車場完備' },
+  { value: 'バリアフリー', label: 'バリアフリー' },
+];

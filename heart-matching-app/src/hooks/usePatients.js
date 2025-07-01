@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { samplePatients } from '../data/sampleData';
+import { samplePatients } from '../data/sampleDataNew';
 import { 
   generatePatientId, 
   validatePatientData,

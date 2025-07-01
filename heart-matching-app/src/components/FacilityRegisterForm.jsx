@@ -4,7 +4,9 @@ import {
   FACILITY_TYPE_OPTIONS, 
   PROVIDER_SERVICE_OPTIONS,
   DAY_OPTIONS,
-  TIME_SLOT_OPTIONS
+  TIME_SLOT_OPTIONS,
+  SPECIALTY_OPTIONS,
+  FEATURE_OPTIONS
 } from '../data/constants';
 
 const FacilityRegisterForm = ({ onRegister, onCancel, initialData = null, isEdit = false, facilityName = null }) => {
@@ -18,9 +20,8 @@ const FacilityRegisterForm = ({ onRegister, onCancel, initialData = null, isEdit
     availableDays: initialData?.availableDays || [],
     availableTimeSlots: initialData?.availableTimeSlots || [],
     providedServices: initialData?.providedServices || [],
-    specialties: initialData?.specialties ? initialData.specialties.join(', ') : '',
-    maxPatients: initialData?.maxPatients || '',
-    features: initialData?.features ? initialData.features.join(', ') : ''
+    specialties: initialData?.specialties || [],
+    features: initialData?.features || []
   });
 
   const [errors, setErrors] = useState({});
@@ -60,7 +61,6 @@ const FacilityRegisterForm = ({ onRegister, onCancel, initialData = null, isEdit
     if (formData.availableDays.length === 0) newErrors.availableDays = '対応可能曜日を選択してください';
     if (formData.availableTimeSlots.length === 0) newErrors.availableTimeSlots = '対応可能時間帯を選択してください';
     if (formData.providedServices.length === 0) newErrors.providedServices = '提供サービスを選択してください';
-    if (!formData.maxPatients || formData.maxPatients <= 0) newErrors.maxPatients = '受入可能患者数は1以上で入力してください';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -70,10 +70,7 @@ const FacilityRegisterForm = ({ onRegister, onCancel, initialData = null, isEdit
     e.preventDefault();
     if (validateForm()) {
       const facilityData = {
-        ...formData,
-        maxPatients: parseInt(formData.maxPatients),
-        specialties: formData.specialties.split(',').map(s => s.trim()).filter(s => s),
-        features: formData.features.split(',').map(f => f.trim()).filter(f => f)
+        ...formData
       };
       onRegister(facilityData);
     }
@@ -143,21 +140,6 @@ const FacilityRegisterForm = ({ onRegister, onCancel, initialData = null, isEdit
                   ))}
                 </select>
                 {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  受入可能患者数 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={formData.maxPatients}
-                  onChange={(e) => handleInputChange('maxPatients', e.target.value)}
-                  className={`w-full border rounded-md px-3 py-2 ${errors.maxPatients ? 'border-red-500' : 'border-gray-300'}`}
-                  placeholder="例：30"
-                />
-                {errors.maxPatients && <p className="text-red-500 text-xs mt-1">{errors.maxPatients}</p>}
               </div>
             </div>
 
@@ -270,30 +252,42 @@ const FacilityRegisterForm = ({ onRegister, onCancel, initialData = null, isEdit
 
             {/* 専門分野 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                専門分野（カンマ区切り）
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                専門分野
               </label>
-              <input
-                type="text"
-                value={formData.specialties}
-                onChange={(e) => handleInputChange('specialties', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                placeholder="例：循環器内科, 内科, 心臓血管外科"
-              />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {SPECIALTY_OPTIONS.map(specialty => (
+                  <label key={specialty.value} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.specialties.includes(specialty.value)}
+                      onChange={() => handleCheckboxChange('specialties', specialty.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">{specialty.label}</span>
+                  </label>
+                ))}
+              </div>
             </div>
 
             {/* 特徴・設備 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                特徴・設備（カンマ区切り）
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                特徴・設備
               </label>
-              <input
-                type="text"
-                value={formData.features}
-                onChange={(e) => handleInputChange('features', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                placeholder="例：24時間対応, 往診車配備, ICU完備"
-              />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {FEATURE_OPTIONS.map(feature => (
+                  <label key={feature.value} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.features.includes(feature.value)}
+                      onChange={() => handleCheckboxChange('features', feature.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">{feature.label}</span>
+                  </label>
+                ))}
+              </div>
             </div>
 
             {/* ボタン */}

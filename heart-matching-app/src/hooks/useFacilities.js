@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { sampleMedicalFacilities } from '../data/sampleData';
+import { sampleMedicalFacilities } from '../data/sampleDataNew';
 
 export const useFacilities = () => {
   const [facilities, setFacilities] = useState([]);

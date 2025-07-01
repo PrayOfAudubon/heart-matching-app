@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { sampleChatMessages, sampleMatchingStatus } from '../data/sampleData';
+import { sampleChatMessages, sampleMatchingStatus } from '../data/sampleDataNew';
 
 export const useChat = () => {
   const [chatMessages, setChatMessages] = useState({});

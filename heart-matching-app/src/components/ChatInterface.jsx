@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { templateMessages } from '../data/sampleData';
+import { templateMessages } from '../data/sampleDataNew';
 
 const ChatInterface = ({ patient, facilityName, onBack, messages, onSendMessage }) => {
   const [newMessage, setNewMessage] = useState('');

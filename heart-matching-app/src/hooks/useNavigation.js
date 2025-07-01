@@ -7,6 +7,7 @@ export const useNavigation = (isLoggedIn, saveAppState, getAppState) => {
   const [currentView, setCurrentView] = useState('login');
   const [selectedPatientForDetail, setSelectedPatientForDetail] = useState(null);
   const [currentChatPatient, setCurrentChatPatient] = useState(null);
+  const [previousView, setPreviousView] = useState('dashboard'); // 前の画面を記録
   const [searchFilters, setSearchFilters] = useState({
     ageGroup: '',
     gender: '',
@@ -50,6 +51,10 @@ export const useNavigation = (isLoggedIn, saveAppState, getAppState) => {
 
   // カスタム setCurrentView 関数（状態保存付き）
   const handleSetCurrentView = (view) => {
+    // チャット以外の画面変更時は前の画面として記録
+    if (currentView !== 'chat' && view !== 'chat') {
+      setPreviousView(currentView);
+    }
     setCurrentView(view);
   };
 
@@ -60,6 +65,7 @@ export const useNavigation = (isLoggedIn, saveAppState, getAppState) => {
 
   // 患者詳細画面の表示
   const handleViewPatientDetail = (patient) => {
+    setPreviousView(currentView); // 現在の画面を前の画面として記録
     setSelectedPatientForDetail(patient);
     setCurrentView('patientDetail');
   };
@@ -67,11 +73,12 @@ export const useNavigation = (isLoggedIn, saveAppState, getAppState) => {
   // 患者詳細画面から戻る
   const handleBackFromPatientDetail = () => {
     setSelectedPatientForDetail(null);
-    setCurrentView('dashboard');
+    setCurrentView(previousView || 'dashboard');
   };
 
   // チャット開始
   const handleStartChat = (patient, markMessagesAsRead, facilityName) => {
+    setPreviousView(currentView); // 現在の画面を前の画面として記録
     setCurrentChatPatient(patient);
     setCurrentView('chat');
     // 既読にする
@@ -80,6 +87,7 @@ export const useNavigation = (isLoggedIn, saveAppState, getAppState) => {
 
   // チャット一覧からチャット選択
   const handleSelectChat = (patient, markMessagesAsRead, facilityName) => {
+    setPreviousView(currentView); // 現在の画面を前の画面として記録
     setCurrentChatPatient(patient);
     setCurrentView('chat');
     // 既読にする
@@ -89,7 +97,7 @@ export const useNavigation = (isLoggedIn, saveAppState, getAppState) => {
   // チャットから戻る
   const handleBackFromChat = () => {
     setCurrentChatPatient(null);
-    setCurrentView('dashboard');
+    setCurrentView(previousView || 'dashboard'); // 前の画面に戻る
   };
 
   // 検索フィルターをリセット

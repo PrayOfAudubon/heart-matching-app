@@ -105,16 +105,6 @@ const FacilityManagement = ({ facilityName, onBack }) => {
                   <span className="font-medium w-16">電話:</span>
                   <span>{myFacility.phone}</span>
                 </div>
-                <div className="flex items-center">
-                  <span className="font-medium w-16">患者数:</span>
-                  <span>{myFacility.currentPatients}/{myFacility.maxPatients}名</span>
-                  <div className="ml-2 bg-gray-200 rounded-full h-2 flex-1 max-w-20">
-                    <div 
-                      className="bg-blue-600 h-2 rounded-full"
-                      style={{ width: `${(myFacility.currentPatients / myFacility.maxPatients) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
               </div>
 
               <div className="mt-4">
@@ -268,16 +258,6 @@ const FacilityManagement = ({ facilityName, onBack }) => {
                   <div className="flex items-center">
                     <span className="font-medium w-16">電話:</span>
                     <span>{facility.phone}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="font-medium w-16">患者数:</span>
-                    <span>{facility.currentPatients}/{facility.maxPatients}名</span>
-                    <div className="ml-2 bg-gray-200 rounded-full h-2 flex-1 max-w-20">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full"
-                        style={{ width: `${(facility.currentPatients / facility.maxPatients) * 100}%` }}
-                      ></div>
-                    </div>
                   </div>
                 </div>
 

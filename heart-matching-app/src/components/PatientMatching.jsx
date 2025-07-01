@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Send, MessageCircle, Eye, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { usePatients } from '../hooks/usePatients';
 import { useFacilities } from '../hooks/useFacilities';
 import { useAuth } from '../hooks/useAuth';
+import { canApplyForPatient, getPatientApplicationStatus, hasApprovedApplication } from '../utils/patientUtils';
 
-const PatientMatching = ({ onBack }) => {
+const PatientMatching = ({ onBack, onApplyForPatient, onStartChat }) => {
   const { patients } = usePatients();
   const { facilities, findMatchingFacilities, calculateMatchScore, getFacilityByName } = useFacilities();
   const { facilityName } = useAuth();
@@ -119,6 +120,79 @@ const PatientMatching = ({ onBack }) => {
     return '低適合';
   };
 
+  // 申請ボタンの取得（PatientTableと同じロジック）
+  const getApplicationButton = (patient) => {
+    const status = getPatientApplicationStatus(patient, facilityName);
+    const canApply = canApplyForPatient(patient, facilityName);
+    const isApproved = hasApprovedApplication(patient);
+
+    // 既に承認済みの申請がある場合（他の施設からの申請が承認済み）
+    if (isApproved && patient.facility !== facilityName) {
+      return (
+        <div className="flex items-center space-x-1 text-green-600">
+          <CheckCircle className="h-3 w-3" />
+          <span className="text-xs">承認済み</span>
+        </div>
+      );
+    }
+
+    // 自分の施設が登録した患者の場合
+    if (patient.facility === facilityName) {
+      return null; // 自分の患者には申請ボタンを表示しない
+    }
+
+    // 申請ボタンの表示
+    switch (status) {
+      case 'none':
+        if (canApply) {
+          return (
+            <button
+              onClick={() => onApplyForPatient(patient)}
+              className="bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700 flex items-center space-x-1"
+            >
+              <Send className="h-3 w-3" />
+              <span>申請</span>
+            </button>
+          );
+        }
+        break;
+      case 'pending':
+        return (
+          <div className="flex items-center space-x-1 text-yellow-600">
+            <Clock className="h-3 w-3" />
+            <span className="text-xs">審査中</span>
+          </div>
+        );
+      case 'approved':
+        return (
+          <div className="flex items-center space-x-1 text-green-600">
+            <CheckCircle className="h-3 w-3" />
+            <span className="text-xs">承認済み</span>
+          </div>
+        );
+      case 'rejected':
+        return (
+          <div className="flex items-center space-x-1 text-red-600">
+            <XCircle className="h-3 w-3" />
+            <span className="text-xs">拒否済み</span>
+          </div>
+        );
+      case 'others':
+        return (
+          <span className="text-xs text-gray-500">申請済み</span>
+        );
+      default:
+        break;
+    }
+
+    // 申請不可の場合の表示
+    return (
+      <div className="flex items-center space-x-1 text-gray-500">
+        <span className="text-xs">申請不可</span>
+      </div>
+    );
+  };
+
   return (
     <div className="p-6">
       <div className="flex items-center space-x-4 mb-6">
@@ -228,14 +302,14 @@ const PatientMatching = ({ onBack }) => {
                   ))}
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-between items-center space-x-2">
+                  {getApplicationButton(match.patient)}
                   <button 
-                    className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                    onClick={() => {
-                      alert(`${match.patient.id}への問い合わせ機能は今後実装予定です`);
-                    }}
+                    className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 flex items-center space-x-1"
+                    onClick={() => onStartChat(match.patient)}
                   >
-                    問い合わせ
+                    <MessageCircle className="h-3 w-3" />
+                    <span>チャット</span>
                   </button>
                 </div>
               </div>
@@ -426,7 +500,6 @@ const PatientMatching = ({ onBack }) => {
                     <div className="text-sm text-gray-600 mb-2">
                       <p>{result.facility.area}</p>
                       <p>{result.facility.address}</p>
-                      <p>患者数: {result.facility.currentPatients}/{result.facility.maxPatients}名</p>
                     </div>
 
                     <div className="space-y-1">
@@ -450,15 +523,61 @@ const PatientMatching = ({ onBack }) => {
                       ))}
                     </div>
 
-                    <div className="mt-2 flex justify-end">
-                      <button 
-                        className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                        onClick={() => {
-                          alert(`${result.facility.name}への申請機能は今後実装予定です`);
-                        }}
-                      >
-                        申請する
-                      </button>
+                    <div className="mt-2 flex justify-between items-center space-x-2">
+                      {selectedPatient && (
+                        <div className="flex space-x-2">
+                          {(() => {
+                            const status = getPatientApplicationStatus(selectedPatient, facilityName);
+                            const canApply = canApplyForPatient(selectedPatient, facilityName);
+                            
+                            // 自分の施設が登録した患者の場合は申請ボタンを表示しない
+                            if (selectedPatient.facility === facilityName) {
+                              return (
+                                <button 
+                                  className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 flex items-center space-x-1"
+                                  onClick={() => onStartChat(selectedPatient)}
+                                >
+                                  <MessageCircle className="h-3 w-3" />
+                                  <span>チャット</span>
+                                </button>
+                              );
+                            }
+                            
+                            // 申請可能な場合のみ申請ボタンを表示
+                            if (status === 'none' && canApply) {
+                              return (
+                                <>
+                                  <button 
+                                    className="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 flex items-center space-x-1"
+                                    onClick={() => onApplyForPatient(selectedPatient)}
+                                  >
+                                    <Send className="h-3 w-3" />
+                                    <span>申請</span>
+                                  </button>
+                                  <button 
+                                    className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 flex items-center space-x-1"
+                                    onClick={() => onStartChat(selectedPatient)}
+                                  >
+                                    <MessageCircle className="h-3 w-3" />
+                                    <span>チャット</span>
+                                  </button>
+                                </>
+                              );
+                            }
+                            
+                            // その他の状態（審査中、承認済み等）の場合はチャットのみ
+                            return (
+                              <button 
+                                className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 flex items-center space-x-1"
+                                onClick={() => onStartChat(selectedPatient)}
+                              >
+                                <MessageCircle className="h-3 w-3" />
+                                <span>チャット</span>
+                              </button>
+                            );
+                          })()}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))

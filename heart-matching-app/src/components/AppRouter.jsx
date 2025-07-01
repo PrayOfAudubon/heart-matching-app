@@ -9,6 +9,7 @@ import ApplicationModal from '../components/ApplicationModal';
 import RegistrationSuccessModal from '../components/RegistrationSuccessModal';
 import FacilityManagement from '../components/FacilityManagement';
 import PatientMatching from '../components/PatientMatching';
+import MapDashboard from '../components/MapDashboard';
 
 /**
  * アプリケーションのルーティングとレンダリングロジックを管理するコンポーネント
@@ -89,123 +90,227 @@ const AppRouter = ({
   // 医療機関管理画面の表示
   if (currentView === 'facilities') {
     return (
-      <FacilityManagement
-        facilityName={facilityName}
-        onBack={() => handleSetCurrentView('dashboard')}
-      />
-    );
-  }
-
-  // マッチング画面の表示
-  // 医療機関管理画面の表示
-  if (currentView === 'facilities') {
-    return (
-      <FacilityManagement
-        facilityName={facilityName}
-        onBack={() => handleSetCurrentView('dashboard')}
-      />
+      <>
+        <FacilityManagement
+          facilityName={facilityName}
+          onBack={() => handleSetCurrentView('dashboard')}
+        />
+        
+        {/* モーダル群 */}
+        {selectedPatient && (
+          <ContactModal 
+            patient={selectedPatient} 
+            onClose={closeContactModal}
+            showQR={showQR}
+            setShowQR={setShowQR}
+          />
+        )}
+        {showApplicationModal && applicationPatient && (
+          <ApplicationModal
+            patient={applicationPatient}
+            onClose={closeApplicationModal}
+            onSubmit={handleSubmitApplication}
+            facilityName={facilityName}
+          />
+        )}
+      </>
     );
   }
 
   // マッチング画面の表示
   if (currentView === 'matching') {
     return (
-      <PatientMatching
-        onBack={() => handleSetCurrentView('dashboard')}
-      />
+      <>
+        <PatientMatching
+          onBack={() => handleSetCurrentView('dashboard')}
+          onApplyForPatient={openApplicationModal}
+          onStartChat={handleStartChat}
+        />
+        
+        {/* モーダル群 */}
+        {selectedPatient && (
+          <ContactModal 
+            patient={selectedPatient} 
+            onClose={closeContactModal}
+            showQR={showQR}
+            setShowQR={setShowQR}
+          />
+        )}
+        {showApplicationModal && applicationPatient && (
+          <ApplicationModal
+            patient={applicationPatient}
+            onClose={closeApplicationModal}
+            onSubmit={handleSubmitApplication}
+            facilityName={facilityName}
+          />
+        )}
+      </>
+    );
+  }
+
+  // 地図画面の表示
+  if (currentView === 'map') {
+    return (
+      <>
+        <MapDashboard onBack={() => handleSetCurrentView('dashboard')} />
+        
+        {/* モーダル群 */}
+        {selectedPatient && (
+          <ContactModal 
+            patient={selectedPatient} 
+            onClose={closeContactModal}
+            showQR={showQR}
+            setShowQR={setShowQR}
+          />
+        )}
+        {showApplicationModal && applicationPatient && (
+          <ApplicationModal
+            patient={applicationPatient}
+            onClose={closeApplicationModal}
+            onSubmit={handleSubmitApplication}
+            facilityName={facilityName}
+          />
+        )}
+      </>
     );
   }
 
   // 患者詳細画面の表示
   if (currentView === 'patientDetail' && selectedPatientForDetail) {
     return (
-      <PatientDetailView
-        patient={selectedPatientForDetail}
-        onBack={handleBackFromPatientDetail}
-        onStartChat={handleStartChat}
-        onDirectContact={openContactModal}
-      />
+      <>
+        <PatientDetailView
+          patient={selectedPatientForDetail}
+          onBack={handleBackFromPatientDetail}
+          onStartChat={handleStartChat}
+          onDirectContact={openContactModal}
+        />
+        
+        {/* モーダル群 */}
+        {selectedPatient && (
+          <ContactModal 
+            patient={selectedPatient} 
+            onClose={closeContactModal}
+            showQR={showQR}
+            setShowQR={setShowQR}
+          />
+        )}
+        {showApplicationModal && applicationPatient && (
+          <ApplicationModal
+            patient={applicationPatient}
+            onClose={closeApplicationModal}
+            onSubmit={handleSubmitApplication}
+            facilityName={facilityName}
+          />
+        )}
+      </>
     );
   }
 
   // チャット画面の表示
   if (currentView === 'chat' && currentChatPatient) {
     return (
-      <ChatInterface
-        patient={currentChatPatient}
-        facilityName={facilityName}
-        onBack={handleBackFromChat}
-        messages={messages}
-        onSendMessage={handleSendMessage}
-      />
+      <>
+        <ChatInterface
+          patient={currentChatPatient}
+          facilityName={facilityName}
+          onBack={handleBackFromChat}
+          messages={messages}
+          onSendMessage={handleSendMessage}
+        />
+        
+        {/* モーダル群 */}
+        {selectedPatient && (
+          <ContactModal 
+            patient={selectedPatient} 
+            onClose={closeContactModal}
+            showQR={showQR}
+            setShowQR={setShowQR}
+          />
+        )}
+        {showApplicationModal && applicationPatient && (
+          <ApplicationModal
+            patient={applicationPatient}
+            onClose={closeApplicationModal}
+            onSubmit={handleSubmitApplication}
+            facilityName={facilityName}
+          />
+        )}
+      </>
     );
-  }
-
-  if (currentView === 'facilities') {
-    return <FacilityManagement onBack={() => handleSetCurrentView('dashboard')} />;
-  }
-
-  if (currentView === 'matching') {
-    return <PatientMatching onBack={() => handleSetCurrentView('dashboard')} />;
   }
 
   return (
     <>
       {currentView === 'register' ? (
-        <RegisterView 
-          formData={formData} 
-          setFormData={setFormData} 
-          validationErrors={validationErrors}
-          setCurrentView={handleSetCurrentView}
-          handlePatientRegistration={handlePatientRegistration}
-        />
-      ) : currentView === 'facilities' ? (
-        <FacilityManagement 
-          onBack={() => handleSetCurrentView('dashboard')}
-        />
-      ) : currentView === 'matching' ? (
-        <PatientMatching 
-          onBack={() => handleSetCurrentView('dashboard')}
-        />
+        <>
+          <RegisterView 
+            formData={formData} 
+            setFormData={setFormData} 
+            validationErrors={validationErrors}
+            setCurrentView={handleSetCurrentView}
+            handlePatientRegistration={handlePatientRegistration}
+          />
+          
+          {/* モーダル群 */}
+          {selectedPatient && (
+            <ContactModal 
+              patient={selectedPatient} 
+              onClose={closeContactModal}
+              showQR={showQR}
+              setShowQR={setShowQR}
+            />
+          )}
+          {showApplicationModal && applicationPatient && (
+            <ApplicationModal
+              patient={applicationPatient}
+              onClose={closeApplicationModal}
+              onSubmit={handleSubmitApplication}
+              facilityName={facilityName}
+            />
+          )}
+        </>
       ) : (
-        <Dashboard 
-          currentView={currentView}
-          setCurrentView={handleSetCurrentView}
-          facilityName={facilityName}
-          handleLogout={handleLogout}
-          filteredPatients={filteredPatients}
-          searchFilters={searchFilters}
-          setSearchFilters={handleSetSearchFilters}
-          setSelectedPatient={openContactModal}
-          onApplyForPatient={openApplicationModal}
-          onViewPatientDetail={handleViewPatientDetail}
-          receivedApplications={receivedApplications}
-          sentApplications={sentApplications}
-          onApproveApplication={approveApplication}
-          onRejectApplication={rejectApplication}
-          chats={chats}
-          patients={patients}
-          totalUnreadCount={totalUnreadCount}
-          onSelectChat={handleSelectChat}
-        />
-      )}
-      
-      {/* モーダル群 */}
-      {selectedPatient && (
-        <ContactModal 
-          patient={selectedPatient} 
-          onClose={closeContactModal}
-          showQR={showQR}
-          setShowQR={setShowQR}
-        />
-      )}
-      {showApplicationModal && applicationPatient && (
-        <ApplicationModal
-          patient={applicationPatient}
-          onClose={closeApplicationModal}
-          onSubmit={handleSubmitApplication}
-          facilityName={facilityName}
-        />
+        <>
+          <Dashboard 
+            currentView={currentView}
+            setCurrentView={handleSetCurrentView}
+            facilityName={facilityName}
+            handleLogout={handleLogout}
+            filteredPatients={filteredPatients}
+            searchFilters={searchFilters}
+            setSearchFilters={handleSetSearchFilters}
+            setSelectedPatient={openContactModal}
+            onApplyForPatient={openApplicationModal}
+            onViewPatientDetail={handleViewPatientDetail}
+            receivedApplications={receivedApplications}
+            sentApplications={sentApplications}
+            onApproveApplication={approveApplication}
+            onRejectApplication={rejectApplication}
+            chats={chats}
+            patients={patients}
+            totalUnreadCount={totalUnreadCount}
+            onSelectChat={handleSelectChat}
+          />
+          
+          {/* モーダル群 */}
+          {selectedPatient && (
+            <ContactModal 
+              patient={selectedPatient} 
+              onClose={closeContactModal}
+              showQR={showQR}
+              setShowQR={setShowQR}
+            />
+          )}
+          {showApplicationModal && applicationPatient && (
+            <ApplicationModal
+              patient={applicationPatient}
+              onClose={closeApplicationModal}
+              onSubmit={handleSubmitApplication}
+              facilityName={facilityName}
+            />
+          )}
+        </>
       )}
     </>
   );
