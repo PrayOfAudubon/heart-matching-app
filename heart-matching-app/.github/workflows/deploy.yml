@@ -22,7 +22,8 @@ jobs:
         node-version: '18'
 
     - name: Install dependencies
-      run: npm ci
+      run: npm install
+      working-directory: ./heart-matching-app
 
     - name: Build
       run: npm run build
